@@ -26,39 +26,48 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
             fontSize: 30.0,
             fontWeight: FontWeight.bold,
             letterSpacing: 2.0,
-            color: Colors.black,
+            color: Colors.white,
             fontFamily: 'IndieFlower',
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.blueGrey,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const SizedBox(
-            width: 200,
-            height: 200,
-            child: Image(
-              image: AssetImage('images/chest.png'),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black, Colors.black87, Colors.black26],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
           ),
-          Center(
-            child: Container(
-              child: const Text(
-                'Capsule of Memories',
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
-                  color: Colors.black,
-                  fontFamily: 'IndieFlower',
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const SizedBox(
+              width: 200,
+              height: 200,
+              child: Image(
+                image: AssetImage('images/chest.png'),
+              ),
+            ),
+            Center(
+              child: Container(
+                child: const Text(
+                  'Capsule of Memories',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2.0,
+                    color: Colors.white,
+                    fontFamily: 'IndieFlower',
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[600],
