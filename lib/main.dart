@@ -1,10 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:chronocapsules/sign_in_screen.dart';
-import 'package:chronocapsules/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MaterialApp(
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    const MaterialApp(
       home: SigninScreen(),
-    ));
+    ),
+  );
+}
 
 class TimeCapsuleHomeScreen extends StatefulWidget {
   const TimeCapsuleHomeScreen({super.key});
@@ -33,41 +43,64 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
         centerTitle: true,
         backgroundColor: Colors.blueGrey,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black, Colors.black87, Colors.black26],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const SizedBox(
-              width: 200,
-              height: 200,
-              child: Image(
-                image: AssetImage('images/chest.png'),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.black87, Colors.black26],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
               ),
             ),
-            Center(
-              child: Container(
-                child: const Text(
-                  'Capsule of Memories',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    color: Colors.white,
-                    fontFamily: 'IndieFlower',
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                const SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Image(
+                    image: AssetImage('images/chest.png'),
                   ),
                 ),
+                Center(
+                  child: Container(
+                    child: const Text(
+                      'Capsule of Memories',
+                      style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                        color: Colors.white,
+                        fontFamily: 'IndieFlower',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                child: const Text("Logout"),
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((value) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SigninScreen(),
+                      ),
+                    );
+                  });
+                },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[600],

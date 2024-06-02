@@ -4,16 +4,15 @@ import 'package:chronocapsules/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
 class SigninScreen extends StatefulWidget {
-  const SigninScreen({Key? key})
-      : super(key: key); // Follow Dart conventions for class names
+  const SigninScreen({super.key}); // Follow Dart conventions for class names
 
   @override
   State<SigninScreen> createState() => _SigninScreenState();
 }
 
 class _SigninScreenState extends State<SigninScreen> {
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController _emailTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,7 @@ class _SigninScreenState extends State<SigninScreen> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.black, Colors.black87, Colors.black26],
             begin: Alignment.bottomCenter,
@@ -35,17 +34,17 @@ class _SigninScreenState extends State<SigninScreen> {
             child: Column(
               children: <Widget>[
                 logoWidget("images/chest.png"),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 reusableTextField("Enter Username", Icons.person_outline, false,
                     _emailTextController),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 reusableTextField("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 signInSignUpButton(
@@ -55,7 +54,8 @@ class _SigninScreenState extends State<SigninScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => TimeCapsuleHomeScreen()));
+                            builder: (context) =>
+                                const TimeCapsuleHomeScreen()));
                   },
                 ),
                 signUpOption()
@@ -80,7 +80,7 @@ class _SigninScreenState extends State<SigninScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SignUpScreen(),
+                builder: (context) => const SignUpScreen(),
               ),
             );
           },

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "893273858056",
+    "project_id": "chrono-a57de",
+    "storage_bucket": "chrono-a57de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893273858056:android:edd100979a72c14379b1bd",
+        "android_client_info": {
+          "package_name": "com.example.chronocapsules"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKUWLcu3s-PShi5_bd2bMYsoD2zD5i0oI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
