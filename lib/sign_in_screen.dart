@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chronocapsules/Reusable%20Widgets/reusable_widget.dart';
 import 'package:chronocapsules/main.dart';
 import 'package:chronocapsules/sign_up_screen.dart';
@@ -51,11 +52,17 @@ class _SigninScreenState extends State<SigninScreen> {
                   context,
                   true,
                   () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const TimeCapsuleHomeScreen()));
+                    FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: _emailTextController.text,
+                            password: _passwordTextController.text)
+                        .then((value) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TimeCapsuleHomeScreen()));
+                    });
                   },
                 ),
                 signUpOption()

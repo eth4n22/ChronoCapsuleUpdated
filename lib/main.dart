@@ -89,6 +89,7 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                 child: const Text("Logout"),
                 onPressed: () {
                   FirebaseAuth.instance.signOut().then((value) {
+                    print("Signed Out");
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
