@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:chronocapsules/sign_in_screen.dart';
+import 'package:chronocapsules/create_capsule_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -16,6 +17,13 @@ void main() async {
   );
 }
 
+class Capsule {
+  final String title;
+  final DateTime date;
+
+  Capsule({required this.title, required this.date});
+}
+
 class TimeCapsuleHomeScreen extends StatefulWidget {
   const TimeCapsuleHomeScreen({super.key});
 
@@ -24,7 +32,8 @@ class TimeCapsuleHomeScreen extends StatefulWidget {
 }
 
 class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
-  DateTime? _selectedDate; // Variable to store the selected opening date
+  DateTime? _selectedDate;
+  List<Capsule> capsules = [];
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +63,6 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
               ),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 const SizedBox(
                   width: 200,
@@ -67,7 +74,7 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                 Center(
                   child: Container(
                     child: const Text(
-                      'Capsule of Memories',
+                      'Active ChronoCapsules',
                       style: TextStyle(
                         fontSize: 30.0,
                         fontWeight: FontWeight.bold,
@@ -76,6 +83,24 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                         fontFamily: 'IndieFlower',
                       ),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: capsules.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(
+                          capsules[index].title,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          'Opens on: ${capsules[index].date.toLocal()}',
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -89,7 +114,6 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                 child: const Text("Logout"),
                 onPressed: () {
                   FirebaseAuth.instance.signOut().then((value) {
-                    print("Signed Out");
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -105,34 +129,24 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red[600],
-        onPressed: () {
-          _selectOpeningDate(context);
+        onPressed: () async {
+          final newCapsule = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const CreateCapsuleScreen()),
+          );
+          if (newCapsule != null) {
+            setState(() {
+              capsules.add(newCapsule);
+            });
+          }
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  // Function to show date picker for selecting the opening date
-  void _selectOpeningDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 10),
-    );
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-      // After selecting the opening date, create the time capsule
-      _createTimeCapsule();
-    }
-  }
-
-  // Function to create a new time capsule with the selected opening date
   void _createTimeCapsule() {
-    // Implement logic to create a new time capsule with the selected opening date
     print('Creating a new time capsule with opening date: $_selectedDate');
   }
 }
