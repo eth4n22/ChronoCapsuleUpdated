@@ -1,38 +1,54 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:chronocapsules/sign_in_screen.dart';
 import 'package:chronocapsules/create_capsule_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:chronocapsules/time_capsule_details_screen.dart';
+import 'package:chronocapsules/capsule.dart';
+import 'package:intl/intl.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(
-    const MaterialApp(
-      home: SigninScreen(),
-    ),
-  );
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-class Capsule {
-  final String title;
-  final DateTime date;
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: AuthCheck(),
+    );
+  }
+}
 
-  Capsule({required this.title, required this.date});
+class AuthCheck extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.hasData) {
+          return TimeCapsuleHomeScreen();
+        } else {
+          return SigninScreen();
+        }
+      },
+    );
+  }
 }
 
 class TimeCapsuleHomeScreen extends StatefulWidget {
-  const TimeCapsuleHomeScreen({super.key});
+  const TimeCapsuleHomeScreen({Key? key}) : super(key: key);
 
   @override
   _TimeCapsuleHomeScreenState createState() => _TimeCapsuleHomeScreenState();
 }
 
 class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
-  DateTime? _selectedDate;
   List<Capsule> capsules = [];
 
   @override
@@ -90,14 +106,34 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                   child: ListView.builder(
                     itemCount: capsules.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          capsules[index].title,
-                          style: const TextStyle(color: Colors.white),
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          border: Border.all(
+                            color: Colors.white10,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                        subtitle: Text(
-                          'Opens on: ${capsules[index].date.toLocal()}',
-                          style: const TextStyle(color: Colors.white70),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(8.0),
+                          title: Text(
+                            capsules[index].title,
+                            style: const TextStyle(color: Colors.yellow),
+                          ),
+                          subtitle: Text(
+                            'Opens on: ${DateFormat('MMMM d, yyyy').format(capsules[index].date.toLocal())}',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TimeCapsuleDetailsScreen(capsule: capsules[index]),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
@@ -111,17 +147,17 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: const Text("Logout"),
                 onPressed: () {
                   FirebaseAuth.instance.signOut().then((value) {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SigninScreen(),
+                        builder: (context) => SigninScreen(),
                       ),
                     );
                   });
                 },
+                child: const Text("Logout"),
               ),
             ),
           ),
@@ -133,7 +169,8 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
           final newCapsule = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const CreateCapsuleScreen()),
+              builder: (context) => const CreateCapsuleScreen(),
+            ),
           );
           if (newCapsule != null) {
             setState(() {
@@ -144,17 +181,5 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  void _createTimeCapsule() {
-    print('Creating a new time capsule with opening date: $_selectedDate');
-  }
-}
-
-class Home extends StatelessWidget {
-  const Home({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
