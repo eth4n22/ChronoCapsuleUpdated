@@ -24,7 +24,7 @@ class TimeCapsuleDetailsScreen extends StatelessWidget {
           capsule.title,
           style: const TextStyle(
             fontSize: 24.0,
-            color: Colors.black,
+            color: Colors.white,
             fontFamily: 'IndieFlower',
           ),
         ),

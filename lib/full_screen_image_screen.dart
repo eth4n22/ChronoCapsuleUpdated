@@ -10,7 +10,15 @@ class FullScreenImageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Image Viewer'),
+        title: const Text(
+          'Image Viewer',
+          style: const TextStyle(
+            fontSize: 24.0,
+            color: Colors.white,
+            fontFamily: 'IndieFlower',
+          ),
+        ),
+        backgroundColor: Colors.blueGrey,
       ),
       body: Center(
         child: Image.file(File(imagePath)),
