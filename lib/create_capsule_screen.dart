@@ -20,7 +20,15 @@ class _CreateCapsuleScreenState extends State<CreateCapsuleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Capsule'),
+        title: const Text(
+          'Create Capsule',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'IndieFlower',
+          ),
+        ),
         backgroundColor: Colors.blueGrey,
       ),
       body: Padding(
