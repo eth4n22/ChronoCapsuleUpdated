@@ -51,17 +51,17 @@ class _SigninScreenState extends State<SigninScreen> {
                 signInSignUpButton(
                   context,
                   true,
-                  () {
+                      () {
                     FirebaseAuth.instance
                         .signInWithEmailAndPassword(
-                            email: _emailTextController.text,
-                            password: _passwordTextController.text)
+                        email: _emailTextController.text,
+                        password: _passwordTextController.text)
                         .then((value) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const TimeCapsuleHomeScreen()));
+                              const TimeCapsuleHomeScreen()));
                     });
                   },
                 ),

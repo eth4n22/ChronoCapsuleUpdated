@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart'; // Import image_picker for phot
 import 'dart:io';
 
 class CreateCapsuleScreen extends StatefulWidget {
-  const CreateCapsuleScreen({Key? key}) : super(key: key);
+  const CreateCapsuleScreen({super.key});
 
   @override
   _CreateCapsuleScreenState createState() => _CreateCapsuleScreenState();
@@ -13,7 +13,8 @@ class CreateCapsuleScreen extends StatefulWidget {
 class _CreateCapsuleScreenState extends State<CreateCapsuleScreen> {
   final TextEditingController _titleController = TextEditingController();
   DateTime? _selectedDate;
-  List<File> _selectedPhotos = []; // List to store selected photos
+  final List<File> _selectedPhotos = []; // List to store selected photos
+  final List<String> _letters = []; // List to store letters
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +49,43 @@ class _CreateCapsuleScreenState extends State<CreateCapsuleScreen> {
               child: const Text('Select Photos'),
             ),
             const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _addLetter(context),
+              child: const Text('Add Letter'),
+            ),
+            const SizedBox(height: 20),
             // Display selected photos here (if any)
             Expanded(
               child: ListView.builder(
-                itemCount: _selectedPhotos.length,
+                itemCount: _selectedPhotos.length + _letters.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Image.file(_selectedPhotos[index]),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle),
-                      onPressed: () {
-                        setState(() {
-                          _selectedPhotos.removeAt(index);
-                        });
-                      },
-                    ),
-                  );
+                  if (index < _selectedPhotos.length) {
+                    return ListTile(
+                      leading: Image.file(_selectedPhotos[index]),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.remove_circle),
+                        onPressed: () {
+                          setState(() {
+                            _selectedPhotos.removeAt(index);
+                          });
+                        },
+                      ),
+                    );
+                  } else {
+                    int letterIndex = index - _selectedPhotos.length;
+                    return ListTile(
+                      title: Text('Letter ${letterIndex + 1}'),
+                      subtitle: Text(_letters[letterIndex]),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.remove_circle),
+                        onPressed: () {
+                          setState(() {
+                            _letters.removeAt(letterIndex);
+                          });
+                        },
+                      ),
+                    );
+                  }
                 },
               ),
             ),
@@ -95,14 +117,53 @@ class _CreateCapsuleScreenState extends State<CreateCapsuleScreen> {
   }
 
   Future<void> _selectPhotos(BuildContext context) async {
-    final List<XFile>? selectedImages = await ImagePicker().pickMultiImage(
+    final List<XFile> selectedImages = await ImagePicker().pickMultiImage(
       imageQuality: 70, // Adjust as needed
     );
 
-    if (selectedImages != null && selectedImages.isNotEmpty) {
+    if (selectedImages.isNotEmpty) {
       setState(() {
         _selectedPhotos.clear(); // Clear existing selections
         _selectedPhotos.addAll(selectedImages.map((image) => File(image.path)));
+      });
+    }
+  }
+
+  Future<void> _addLetter(BuildContext context) async {
+    String? letter = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController letterController = TextEditingController();
+        return AlertDialog(
+          title: const Text('Add a Letter'),
+          content: TextField(
+            controller: letterController,
+            maxLines: 5,
+            decoration: const InputDecoration(
+              hintText: 'Type your letter here...',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Add'),
+              onPressed: () {
+                Navigator.of(context).pop(letterController.text);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (letter != null && letter.isNotEmpty) {
+      setState(() {
+        _letters.add(letter);
       });
     }
   }
@@ -113,6 +174,7 @@ class _CreateCapsuleScreenState extends State<CreateCapsuleScreen> {
         title: _titleController.text,
         date: _selectedDate!,
         uploadedPhotos: _selectedPhotos.map((photo) => photo.path).toList(),
+        letters: _letters,
       );
       Navigator.pop(context, newCapsule);
     } else {

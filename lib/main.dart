@@ -7,34 +7,38 @@ import 'package:chronocapsules/time_capsule_details_screen.dart';
 import 'package:chronocapsules/capsule.dart';
 import 'package:intl/intl.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: AuthCheck(),
     );
   }
 }
 
 class AuthCheck extends StatelessWidget {
+  const AuthCheck({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         } else if (snapshot.hasData) {
-          return TimeCapsuleHomeScreen();
+          return const TimeCapsuleHomeScreen();
         } else {
-          return SigninScreen();
+          return const SigninScreen();
         }
       },
     );
@@ -42,7 +46,7 @@ class AuthCheck extends StatelessWidget {
 }
 
 class TimeCapsuleHomeScreen extends StatefulWidget {
-  const TimeCapsuleHomeScreen({Key? key}) : super(key: key);
+  const TimeCapsuleHomeScreen({super.key});
 
   @override
   _TimeCapsuleHomeScreenState createState() => _TimeCapsuleHomeScreenState();
@@ -50,6 +54,18 @@ class TimeCapsuleHomeScreen extends StatefulWidget {
 
 class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
   List<Capsule> capsules = [];
+
+  void _deleteCapsule(int index) {
+    setState(() {
+      capsules.removeAt(index);
+    });
+  }
+
+  void _updateCapsule(Capsule updatedCapsule, int index) {
+    setState(() {
+      capsules[index] = updatedCapsule;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +123,8 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                     itemCount: capsules.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
                         decoration: BoxDecoration(
                           color: Colors.grey,
                           border: Border.all(
@@ -126,11 +143,19 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                             'Opens on: ${DateFormat('MMMM d, yyyy').format(capsules[index].date.toLocal())}',
                             style: const TextStyle(color: Colors.white),
                           ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _deleteCapsule(index),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TimeCapsuleDetailsScreen(capsule: capsules[index]),
+                                builder: (context) => TimeCapsuleDetailsScreen(
+                                  capsule: capsules[index],
+                                  onUpdate: (updatedCapsule) =>
+                                      _updateCapsule(updatedCapsule, index),
+                                ),
                               ),
                             );
                           },
@@ -152,7 +177,7 @@ class _TimeCapsuleHomeScreenState extends State<TimeCapsuleHomeScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SigninScreen(),
+                        builder: (context) => const SigninScreen(),
                       ),
                     );
                   });
